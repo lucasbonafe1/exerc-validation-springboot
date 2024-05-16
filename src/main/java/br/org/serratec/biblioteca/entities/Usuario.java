@@ -1,5 +1,8 @@
 package br.org.serratec.biblioteca.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,9 +11,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "usuario")
+@JsonIdentityInfo(
+		generator = ObjectIdGenerators.PropertyGenerator.class,
+		property = "user_id",
+		scope = Usuario.class
+) // somente para eliminar o ciclo que acontece no codigo que fica um entrando dentro do outro na hora do get
 public class Usuario {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,12 +29,16 @@ public class Usuario {
 	private Integer user_id;
 	
 	@Column(name = "user_nome")
+	@NotEmpty(message = "Nome não pode estar em branco.")
 	private String user_nome;
 	
 	@Column(name = "user_email")
+	@NotBlank(message = "Email não pode estar em branco.")
+	@Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
 	private String user_email;
 	
 	@Column(name = "user_password")
+	@NotBlank(message = "Senha não pode estar em branco.")
 	private String user_password;
 	
 	@ManyToOne
@@ -40,7 +55,6 @@ public class Usuario {
 		this.user_email = user_email;
 		this.user_password = user_password;
 		this.perfil = perfil;
-		
 	}
 
 	public Integer getUser_id() {
@@ -77,6 +91,11 @@ public class Usuario {
 
 	public Integer getPerfil() {
 		return perfil.getPerfilId();
-	}		
+	}
+
+	/*public void setPerfil(Perfil perfil) {
+		this.perfil = perfil;
+	}*/
+	
 }
 

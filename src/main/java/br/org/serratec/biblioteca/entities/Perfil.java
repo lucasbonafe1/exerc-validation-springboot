@@ -2,6 +2,9 @@ package br.org.serratec.biblioteca.entities;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,10 +12,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity // define que a class é uma entidade
 @Table(name = "perfil")
-
+@JsonIdentityInfo(
+		generator = ObjectIdGenerators.PropertyGenerator.class,
+		property = "perfilId",
+		scope = Perfil.class
+)
 public class Perfil {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,13 +29,17 @@ public class Perfil {
 	@Column(name = "perfil_id")
 	private Integer perfilId;
 	
+	
 	@Column(name = "nome")
+	@NotEmpty(message = "Nome não pode estar em branco")
 	private String nome;
 	
+	
 	@Column(name = "descricao")
+	@NotNull
 	private String descricao;
 
-	@OneToMany(mappedBy = "perfil") // 1 Perfil / N Usuarios
+	@OneToMany(mappedBy = "perfil") // nome da instancia da classe perfil
 	private List<Usuario> usuario; // para retornar uma lista de usuários que estão naquele determinado perfil
 
 	public Perfil() {
